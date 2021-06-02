@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  service:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    image: adsonrodrigues/poc-spaces
+    volumes:
+      - .:/usr/local/app
+    ports:
+      - 8000:8000
+    env_file:
+      - ./poc_spaces_django/.env
+    depends_on:
+      - postgres
+    stdin_open: true
+    tty: true
+    networks:
+      - poc-spaces-network
+
+  postgres:
+    image: postgres:13
+    volumes:
+      - media-intel_postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=root1234
+      - POSTGRES_DB=poc_spaces
+    ports:
+      - 5432:5432
+    networks:
+      - poc-spaces-network
+
+volumes:
+  media-intel_postgres_data:
+
+networks:
+  poc-spaces-network:
+    name: poc-spaces-network
+    driver: bridge
